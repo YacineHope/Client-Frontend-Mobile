@@ -4,7 +4,8 @@ import 'RoomDetailsPage.dart'; // Import RoomDetailsPage
 import 'Models.dart'; // Import Room model
 
 class RoomPage extends StatelessWidget {
-  const RoomPage({super.key});
+  final User user; // User object to pass to Sidebar
+  const RoomPage({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -120,6 +121,7 @@ class RoomPage extends StatelessWidget {
                                 MaterialPageRoute(
                                   builder: (context) => RoomDetailsPage(
                                     roomDetails: room,
+                                    currentUser: user // Passe l'utilisateur courant ici
                                   ),
                                 ),
                               );

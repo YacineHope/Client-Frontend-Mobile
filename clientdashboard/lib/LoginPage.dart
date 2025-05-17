@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'ForgotPassword.dart';
 import 'HomePage.dart';
 import 'SignUpPage.dart';
-
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'Models.dart';
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -134,12 +136,7 @@ class _LoginPageState extends State<LoginPage> {
                           ElevatedButton(
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const HomePage(),
-                                  ),
-                                );
+                                _login();
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -229,6 +226,36 @@ class _LoginPageState extends State<LoginPage> {
         ],
       ),
     );
+  }
+
+  Future<void> _login() async {
+    final url = Uri.parse('http://localhost:5000/api/auth/login');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "email": _emailController.text,
+        "motDePasse": _passwordController.text,
+      }),
+    );
+    if (response.statusCode == 200) {
+      final userJson = jsonDecode(response.body)['user'];
+      final user = User.fromJson(userJson);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomePage(
+            user: user,
+            isNew: false,
+          ),
+        ),
+      );
+    } else {
+      // Afficher le message d'erreur
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(jsonDecode(response.body)['message'])),
+      );
+    }
   }
 
   @override

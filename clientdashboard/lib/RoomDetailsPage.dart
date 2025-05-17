@@ -4,8 +4,8 @@ import 'Models.dart';
 
 class RoomDetailsPage extends StatefulWidget {
   final Room roomDetails;
-
-  const RoomDetailsPage({super.key, required this.roomDetails});
+  final User currentUser;
+  const RoomDetailsPage({super.key, required this.roomDetails, required this.currentUser});
 
   @override
   _RoomDetailsPageState createState() => _RoomDetailsPageState();
@@ -186,7 +186,12 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const ReservationFormPage()),
+                      builder: (context) =>
+                          ReservationFormPage(
+                            selectedRoom: widget.roomDetails,
+                            currentUser: widget.currentUser, // Passe ici l'utilisateur connecté
+                          ),
+                    ),
                   );
                 },
                 style: ElevatedButton.styleFrom(

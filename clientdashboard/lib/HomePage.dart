@@ -6,9 +6,13 @@ import 'Footer.dart';
 import 'RoomPage.dart'; // Import RoomPage for navigation
 // Import ProfilePage
 import 'SplashScreen.dart'; // Import SplashScreen
+import 'Models.dart';
+import 'ProfilePage.dart'; // Import ProfilePage
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final User user;
+  final bool isNew;
+  const HomePage({super.key, required this.user, required this.isNew});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -78,24 +82,34 @@ class _HomePageState extends State<HomePage> {
         ),
         backgroundColor: const Color(0xFF6E4B2F),
         actions: [
-          // Profile Icon with Dropdown Menu
           PopupMenuButton<String>(
             icon: const CircleAvatar(
-              backgroundImage:
-                  AssetImage('assets/guest.png'), // Default profile image
+              backgroundImage: AssetImage('assets/guest.png'),
               radius: 20,
             ),
             onSelected: (value) {
-              // Navigate to SplashScreen
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const SplashScreen(),
-                ),
-                (route) => false,
-              );
+              if (value == 'profile') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfilePage(user: widget.user),
+                  ),
+                );
+              } else if (value == 'logout') {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SplashScreen(),
+                  ),
+                  (route) => false,
+                );
+              }
             },
             itemBuilder: (BuildContext context) => [
+              const PopupMenuItem(
+                value: 'profile',
+                child: Text('Voir le profil'),
+              ),
               const PopupMenuItem(
                 value: 'logout',
                 child: Text('Déconnecter'),
@@ -145,6 +159,20 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: 20, left: 20, right: 20, bottom: 0),
+              child: Text(
+                widget.isNew
+                    ? "Bonjour ${widget.user.nom} ${widget.user.prenom} !"
+                    : "Bon retour ${widget.user.nom} ${widget.user.prenom} !",
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22,
+                  color: Colors.black,
+                ),
+              ),
+            ),
 
             // 3. Carrousel d'Images
 
@@ -212,7 +240,7 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const RoomPage(),
+                              builder: (context) => RoomPage(user: widget.user),
                             ),
                           );
                         },

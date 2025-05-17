@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'RoomPage.dart';
 import 'HomePage.dart';
-import 'ProfilePage.dart';
 import 'ServicesPage.dart'; // Import ServicesPage
 import 'Models.dart'; // Import Models to access User data
 import 'SplashScreen.dart'; // Import SplashScreen for logout
@@ -12,17 +11,6 @@ class Sidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-
-    // Example user data (replace with actual user data from your app)
-    final User currentUser = User(
-      nom: 'Doe',
-      prenom: 'John',
-      pays: 'Algeria',
-      wilaya: 'Alger',
-      email: 'john.doe@example.com',
-      numeroDeTelephone: '+213123456789',
-      motDePasse: 'password123',
-    );
 
     return Container(
       width: screenWidth < 600 ? screenWidth * 0.7 : 270, // Responsive width
@@ -72,12 +60,6 @@ class Sidebar extends StatelessWidget {
               title: 'Voir le profile',
               onTap: () {
                 // Navigate to Profile Page
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfilePage(user: currentUser),
-                  ),
-                );
               },
             ),
             _buildMenuItem(
@@ -86,12 +68,6 @@ class Sidebar extends StatelessWidget {
               title: 'Accueil',
               onTap: () {
                 // Navigate to Home Page
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HomePage(),
-                  ),
-                );
               },
             ),
             _buildMenuItem(
@@ -100,12 +76,7 @@ class Sidebar extends StatelessWidget {
               title: 'Les Chambres',
               onTap: () {
                 // Navigate to RoomPage
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const RoomPage(),
-                  ),
-                );
+               
               },
             ),
             _buildMenuItem(

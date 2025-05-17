@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'Models.dart'; // Ajoutez ceci en haut si ce n'est pas déjà fait
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class ReservationFormPage extends StatefulWidget {
-  const ReservationFormPage({super.key});
+  final Room?
+      selectedRoom; // Ajoutez ce paramètre pour recevoir la chambre sélectionnée
+  final User? currentUser;
+  // Ajoutez ce paramètre pour recevoir la chambre sélectionnée
+
+  const ReservationFormPage({super.key, this.selectedRoom, this.currentUser});
 
   @override
   _ReservationFormPageState createState() => _ReservationFormPageState();
@@ -29,32 +37,31 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
 
   // State variables
   String? _selectedCountry;
+  String? _selectedProvince;
   String? _selectedIdType;
   bool _showIdInput = false;
   String? _selectedTransportMode;
   String? _selectedPaymentMethod;
   bool _saveCardForFuture = false;
 
-  // Additional services
-  bool _petitDejeuner = false;
-  bool _restaurant = false;
-  bool _cafeteria = false;
-  bool _massage = false;
-  bool _facialCare = false;
-  bool _footCare = false;
-  bool _parking = false;
-  final bool _transportByPlane = false;
-  final bool _transportByBus = false;
-  final bool _transportByCar = false;
-  bool _cardioTraining = false;
-  bool _musculation = false;
-  bool _yoga = false;
-
   // Special requests
   bool _litBebe = false;
   bool _etageEleve = false;
   final bool _chambreAntiAllergique = false;
   bool _autres = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.currentUser != null) {
+      _nameController.text = widget.currentUser!.nom;
+      _surnameController.text = widget.currentUser!.prenom;
+      _emailController.text = widget.currentUser!.email;
+      _phoneController.text = widget.currentUser!.numeroDeTelephone;
+      _selectedCountry = widget.currentUser!.pays;
+      _selectedProvince = widget.currentUser!.wilaya;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,16 +81,13 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
       backgroundColor: const Color.fromARGB(255, 232, 196, 167),
       body: PageView(
         controller: _pageController,
-        physics:
-            const NeverScrollableScrollPhysics(), // Disable swipe navigation
+        physics: const NeverScrollableScrollPhysics(),
         children: [
           // Step 1: Select Reservation Dates
           _buildStep1(screenWidth, screenHeight),
           // Step 2: Personal Information
           _buildStep2(screenWidth, screenHeight),
-          // Step 3: Additional Services
-          _buildStep3(screenWidth, screenHeight),
-          // Step 4: Payment (Placeholder for now)
+          // Step 4: Payment (directly after Step 2)
           _buildStep4(screenWidth, screenHeight),
           // Step 5: Confirmation
           _buildStep5(screenWidth, screenHeight),
@@ -312,21 +316,125 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
             ),
             SizedBox(height: screenHeight * 0.02),
             // Adresse d'habitat
-            TextFormField(
-              controller: _addressController,
+            DropdownButtonFormField<String>(
               decoration: InputDecoration(
-                labelText: 'Adresse d\'habitat',
+                labelText: 'Pays',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
+              value: _selectedCountry,
+              hint: const Text('Sélectionner votre pays'),
+              items: const [
+                DropdownMenuItem(value: 'Algérie', child: Text('Algérie')),
+                DropdownMenuItem(value: 'France', child: Text('France')),
+                DropdownMenuItem(value: 'USA', child: Text('USA')),
+                DropdownMenuItem(value: 'Allemagne', child: Text('Allemagne')),
+                // Ajoute d'autres pays si besoin
+              ],
+              onChanged: (value) {
+                setState(() {
+                  _selectedCountry = value;
+                  if (_selectedCountry != 'Algérie') {
+                    _selectedIdType = null;
+                    _selectedProvince = null;
+                  }
+                });
+              },
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Veuillez entrer votre adresse';
+                  return 'Veuillez sélectionner votre pays';
                 }
                 return null;
               },
             ),
+            SizedBox(height: screenHeight * 0.02),
+            // Wilaya (si pays == Algérie)
+            if (_selectedCountry == 'Algérie')
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                  labelText: 'Wilaya',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                value: _selectedProvince,
+                hint: const Text('Sélectionner votre Wilaya'),
+                items: [
+                  'Adrar',
+                  'Chlef',
+                  'Laghouat',
+                  'Oum El Bouaghi',
+                  'Batna',
+                  'Béjaïa',
+                  'Biskra',
+                  'Béchar',
+                  'Blida',
+                  'Bouira',
+                  'Tamanrasset',
+                  'Tébessa',
+                  'Tlemcen',
+                  'Tiaret',
+                  'Tizi Ouzou',
+                  'Alger',
+                  'Djelfa',
+                  'Jijel',
+                  'Sétif',
+                  'Saïda',
+                  'Skikda',
+                  'Sidi Bel Abbès',
+                  'Annaba',
+                  'Guelma',
+                  'Constantine',
+                  'Médéa',
+                  'Mostaganem',
+                  'M’Sila',
+                  'Mascara',
+                  'Ouargla',
+                  'Oran',
+                  'El Bayadh',
+                  'Illizi',
+                  'Bordj Bou Arreridj',
+                  'Boumerdès',
+                  'El Tarf',
+                  'Tindouf',
+                  'Tissemsilt',
+                  'El Oued',
+                  'Khenchela',
+                  'Souk Ahras',
+                  'Tipaza',
+                  'Mila',
+                  'Aïn Defla',
+                  'Naâma',
+                  'Aïn Témouchent',
+                  'Ghardaïa',
+                  'Relizane',
+                  'Timimoun',
+                  'Bordj Badji Mokhtar',
+                  'Ouled Djellal',
+                  'Béni Abbès',
+                  'In Salah',
+                  'In Guezzam',
+                  'Touggourt',
+                  'Djanet',
+                  'El M’Ghair',
+                  'El Meniaa',
+                ]
+                    .map((wilaya) =>
+                        DropdownMenuItem(value: wilaya, child: Text(wilaya)))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedProvince = value;
+                  });
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez sélectionner votre wilaya';
+                  }
+                  return null;
+                },
+              ),
             SizedBox(height: screenHeight * 0.02),
             // Type de document
             DropdownButtonFormField<String>(
@@ -504,310 +612,6 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  // Step 3: Additional Services
-  Widget _buildStep3(double screenWidth, double screenHeight) {
-    // Taux de conversion de l'euro vers le dinar algérien
-    const double conversionRate = 149.34;
-
-    // Fonction pour convertir les prix
-    String convertPriceToDZD(double priceInEuro) {
-      final double priceInDZD = priceInEuro * conversionRate;
-      return '${priceInDZD.toStringAsFixed(2)} DZD';
-    }
-
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(screenWidth * 0.05),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Étape 3: Services Additionnels',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF6E4B2F),
-            ),
-          ),
-          SizedBox(height: screenHeight * 0.02),
-
-          // Restauration
-          const Text(
-            'Restauration',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          CheckboxListTile(
-            title: Text('Petit Déjeuner - ${convertPriceToDZD(10)}'),
-            value: _petitDejeuner,
-            onChanged: (value) {
-              setState(() {
-                _petitDejeuner = value!;
-              });
-            },
-          ),
-          CheckboxListTile(
-            title: Text('Restaurant - ${convertPriceToDZD(10)}'),
-            value: _restaurant,
-            onChanged: (value) {
-              setState(() {
-                _restaurant = value!;
-              });
-            },
-          ),
-          CheckboxListTile(
-            title: Text('Cafétéria - ${convertPriceToDZD(10)}'),
-            value: _cafeteria,
-            onChanged: (value) {
-              setState(() {
-                _cafeteria = value!;
-              });
-            },
-          ),
-          SizedBox(height: screenHeight * 0.02),
-
-          // Spa
-          const Text(
-            'Spa',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          CheckboxListTile(
-            title: Text('Massage - ${convertPriceToDZD(70)} (10h-20h)'),
-            value: _massage,
-            onChanged: (value) {
-              setState(() {
-                _massage = value!;
-              });
-            },
-          ),
-          CheckboxListTile(
-            title: Text('Soins du Visage - ${convertPriceToDZD(50)} (9h-18h)'),
-            value: _facialCare,
-            onChanged: (value) {
-              setState(() {
-                _facialCare = value!;
-              });
-            },
-          ),
-          CheckboxListTile(
-            title: Text('Soins des Pieds - ${convertPriceToDZD(40)} (11h-19h)'),
-            value: _footCare,
-            onChanged: (value) {
-              setState(() {
-                _footCare = value!;
-              });
-            },
-          ),
-          SizedBox(height: screenHeight * 0.02),
-
-          // Gym
-          const Text(
-            'Gym',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          CheckboxListTile(
-            title: Text('Cardio Training - ${convertPriceToDZD(30)} (6h-22h)'),
-            value: _cardioTraining,
-            onChanged: (value) {
-              setState(() {
-                _cardioTraining = value!;
-              });
-            },
-          ),
-          CheckboxListTile(
-            title: Text('Musculation - ${convertPriceToDZD(40)} (7h-21h)'),
-            value: _musculation,
-            onChanged: (value) {
-              setState(() {
-                _musculation = value!;
-              });
-            },
-          ),
-          CheckboxListTile(
-            title: Text('Yoga - ${convertPriceToDZD(35)} (8h-20h)'),
-            value: _yoga,
-            onChanged: (value) {
-              setState(() {
-                _yoga = value!;
-              });
-            },
-          ),
-          SizedBox(height: screenHeight * 0.02),
-
-          // Parking
-          const Text(
-            'Réserver un Parking',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          CheckboxListTile(
-            title: Text('Parking - ${convertPriceToDZD(80)}'),
-            value: _parking,
-            onChanged: (value) {
-              setState(() {
-                _parking = value!;
-              });
-            },
-          ),
-          SizedBox(height: screenHeight * 0.02),
-
-          // Transport
-          const Text(
-            'Transport',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          DropdownButtonFormField<String>(
-            decoration: InputDecoration(
-              labelText: 'Mode de Transport',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-            ),
-            value: _selectedTransportMode,
-            items: [
-              DropdownMenuItem(
-                value: 'Par Avion',
-                child: Text('Par Avion - ${convertPriceToDZD(150)}'),
-              ),
-              DropdownMenuItem(
-                value: 'Par Voiture',
-                child: Text('Par Voiture - ${convertPriceToDZD(100)}'),
-              ),
-              DropdownMenuItem(
-                value: 'Par Bus',
-                child: Text('Par Bus - ${convertPriceToDZD(80)}'),
-              ),
-            ],
-            onChanged: (value) {
-              setState(() {
-                _selectedTransportMode = value;
-              });
-            },
-          ),
-          if (_selectedTransportMode != null)
-            Column(
-              children: [
-                SizedBox(height: screenHeight * 0.02),
-                // Transport Date
-                TextFormField(
-                  controller: _transportDateController,
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    labelText: 'Date de Transport',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    suffixIcon: const Icon(Icons.calendar_today),
-                  ),
-                  onTap: () async {
-                    DateTime? pickedDate = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2100),
-                    );
-                    if (pickedDate != null) {
-                      setState(() {
-                        _transportDateController.text =
-                            "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                      });
-                    }
-                  },
-                ),
-                SizedBox(height: screenHeight * 0.02),
-                // Transport Time
-                TextFormField(
-                  controller: _transportTimeController,
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    labelText: 'Heure de Transport',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    suffixIcon: const Icon(Icons.access_time),
-                  ),
-                  onTap: () async {
-                    TimeOfDay? pickedTime = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                    );
-                    if (pickedTime != null) {
-                      setState(() {
-                        _transportTimeController.text =
-                            "${pickedTime.hour.toString().padLeft(2, '0')}:${pickedTime.minute.toString().padLeft(2, '0')}";
-                      });
-                    }
-                  },
-                ),
-              ],
-            ),
-          SizedBox(height: screenHeight * 0.04),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  _pageController.previousPage(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth * 0.1,
-                    vertical: screenHeight * 0.02,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: const Text(
-                  'Précédent',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  _pageController.nextPage(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF6E4B2F),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth * 0.1,
-                    vertical: screenHeight * 0.02,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: const Text(
-                  'Suivant',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }
@@ -1002,7 +806,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 205, 146, 98),
+                  backgroundColor: const Color(0xFF6E4B2F),
                   padding: EdgeInsets.symmetric(
                     horizontal: screenWidth * 0.1,
                     vertical: screenHeight * 0.02,
@@ -1025,43 +829,6 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
 
   // Step 5: Confirmation
   Widget _buildStep5(double screenWidth, double screenHeight) {
-    // Conversion rate from Euro to DZD
-    const double conversionRate = 149.34;
-
-    // Calculate total price
-    double calculateTotalPrice() {
-      double totalPrice = 0.0;
-
-      // Add room price (assuming a room price is selected)
-      double roomPrice = 100.0; // Replace with the actual room price
-      totalPrice += roomPrice;
-
-      // Add additional services prices
-      if (_petitDejeuner) totalPrice += 10.0;
-      if (_restaurant) totalPrice += 10.0;
-      if (_cafeteria) totalPrice += 10.0;
-      if (_massage) totalPrice += 70.0;
-      if (_facialCare) totalPrice += 50.0;
-      if (_footCare) totalPrice += 40.0;
-      if (_cardioTraining) totalPrice += 30.0;
-      if (_musculation) totalPrice += 40.0;
-      if (_yoga) totalPrice += 35.0;
-      if (_parking) totalPrice += 80.0;
-
-      // Add transport prices
-      if (_selectedTransportMode == 'Par Avion') totalPrice += 150.0;
-      if (_selectedTransportMode == 'Par Voiture') totalPrice += 100.0;
-      if (_selectedTransportMode == 'Par Bus') totalPrice += 80.0;
-
-      return totalPrice;
-    }
-
-    // Convert total price to DZD
-    String convertTotalPriceToDZD(double totalPriceInEuro) {
-      final double totalPriceInDZD = totalPriceInEuro * conversionRate;
-      return '${totalPriceInDZD.toStringAsFixed(2)} DZD';
-    }
-
     return SingleChildScrollView(
       padding: EdgeInsets.all(screenWidth * 0.05),
       child: Column(
@@ -1076,18 +843,35 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
             ),
           ),
           SizedBox(height: screenHeight * 0.02),
-
-          // Display reservation details
+          // Affichage des dates de réservation
           const Text(
-            'Détails de la Réservation',
+            'Dates de réservation',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           ),
           SizedBox(height: screenHeight * 0.01),
-          Text('Date début: ${_startDateController.text}'),
-          Text('Date fin: ${_endDateController.text}'),
+          Text('Date début : ${_startDateController.text}'),
+          Text('Date fin : ${_endDateController.text}'),
+
+          SizedBox(height: screenHeight * 0.02),
+
+          // Affichage des informations de la chambre sélectionnée
+          const Text(
+            'Chambre à réserver',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: screenHeight * 0.01),
+          if (widget.selectedRoom != null) ...[
+            Text('Nom : ${widget.selectedRoom!.name}'),
+            Text('Type : ${widget.selectedRoom!.type}'),
+            Text('Prix : ${widget.selectedRoom!.price.toStringAsFixed(2)} DZD'),
+          ] else
+            const Text('Aucune chambre sélectionnée.'),
           SizedBox(height: screenHeight * 0.02),
 
           // Display personal information
@@ -1103,8 +887,9 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
           Text('Prénom: ${_surnameController.text}'),
           Text('Email: ${_emailController.text}'),
           Text('Pays: $_selectedCountry'),
+          if (_selectedCountry == 'Algérie') Text('Wilaya: $_selectedProvince'),
           Text('Téléphone: ${_phoneController.text}'),
-          Text('Adresse d\'habitat: ${_addressController.text}'),
+
           Text('Type de document: $_selectedIdType'),
           if (_selectedIdType == 'Carte Nationale')
             Text('Numéro de la Carte Nationale: ${_idNumberController.text}'),
@@ -1125,28 +910,6 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
           if (_autres) Text('- Autres: ${_specialRequestController.text}'),
           SizedBox(height: screenHeight * 0.02),
 
-          // Display additional services
-          const Text(
-            'Services Additionnels',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          if (_petitDejeuner) const Text('- Petit Déjeuner'),
-          if (_restaurant) const Text('- Restaurant'),
-          if (_cafeteria) const Text('- Cafétéria'),
-          if (_massage) const Text('- Massage'),
-          if (_facialCare) const Text('- Soins du Visage'),
-          if (_footCare) const Text('- Soins des Pieds'),
-          if (_cardioTraining) const Text('- Cardio Training'),
-          if (_musculation) const Text('- Musculation'),
-          if (_yoga) const Text('- Yoga'),
-          if (_parking) const Text('- Parking'),
-          if (_selectedTransportMode != null)
-            Text('- Transport: $_selectedTransportMode'),
-          SizedBox(height: screenHeight * 0.02),
-
           // Display payment method
           const Text(
             'Mode de Paiement',
@@ -1156,17 +919,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
             ),
           ),
           Text('Mode de Paiement: $_selectedPaymentMethod'),
-          SizedBox(height: screenHeight * 0.02),
 
-          // Display total price
-          const Text(
-            'Prix Total',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(convertTotalPriceToDZD(calculateTotalPrice())),
           SizedBox(height: screenHeight * 0.04),
 
           // Buttons
@@ -1196,11 +949,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
               ElevatedButton(
                 onPressed: () {
                   // Finalize the reservation
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Réservation finalisée avec succès!'),
-                    ),
-                  );
+                  _finaliserReservation();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
@@ -1222,6 +971,35 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
         ],
       ),
     );
+  }
+
+  Future<void> _finaliserReservation() async {
+    final url = Uri.parse('http://localhost:5000/api/reservation');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "dateDebut": _startDateController.text,
+        "dateFin": _endDateController.text,
+        "demandesSpeciales": _specialRequestController.text,
+        "typeDocument": _selectedIdType,
+        "numDocChoisis": _idNumberController.text,
+        "roomName": widget.selectedRoom?.name,
+        "roomType": widget.selectedRoom?.type,
+        "userEmail": _emailController.text,
+        "modePayment": _selectedPaymentMethod,
+      }),
+    );
+    if (response.statusCode == 201) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Réservation finalisée avec succès!')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text('Erreur: ${jsonDecode(response.body)['message']}')),
+      );
+    }
   }
 
   @override

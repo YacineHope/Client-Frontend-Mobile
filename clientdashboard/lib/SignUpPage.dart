@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'LoginPage.dart';
 import 'HomePage.dart'; // Import the RoomPage
-
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'Models.dart';
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
@@ -438,14 +440,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           ElevatedButton(
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-                                // Navigate to HomePage
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const HomePage(), // Navigate to HomePage
-                                  ),
-                                );
+                                _signup();
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -525,6 +520,47 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+  Future<void> _signup() async {
+    final url = Uri.parse('http://localhost:5000/api/auth/signup');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "nom": _firstNameController.text,
+        "prenom": _lastNameController.text,
+        "pays": _selectedCountry,
+        "wilaya": _selectedCountry == 'Algérie' ? _selectedProvince : null,
+        "email": _emailController.text,
+        "numeroDeTelephone": _phoneController.text,
+        "motDePasse": _passwordController.text,
+      }),
+    );
+    if (response.statusCode == 201) {
+      final user = User(
+        nom: _firstNameController.text,
+        prenom: _lastNameController.text,
+        pays: _selectedCountry,
+        wilaya: _selectedProvince,
+        email: _emailController.text,
+        numeroDeTelephone: _phoneController.text,
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomePage(
+            user: user,
+            isNew: true,
+          ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text('Erreur: ${jsonDecode(response.body)['message']}')),
+      );
+    }
+  }
+
   @override
   void dispose() {
     _firstNameController.dispose();
@@ -535,3 +571,4 @@ class _SignUpPageState extends State<SignUpPage> {
     super.dispose();
   }
 }
+

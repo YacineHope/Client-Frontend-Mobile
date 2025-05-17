@@ -25,9 +25,7 @@ class ServicesPage extends StatelessWidget {
             ],
           ),
           backgroundColor: const Color(0xFF8C6239)),
-      drawer: const Drawer(
-        child: Sidebar(), // Add the Sidebar widget
-      ),
+      
       body: ListView(
         padding: const EdgeInsets.all(10.0),
         children: [

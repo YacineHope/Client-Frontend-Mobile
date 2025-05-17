@@ -1,3 +1,34 @@
+
+class User {
+  final String nom;
+  final String prenom;
+  final String? pays;
+  final String? wilaya;
+  final String email;
+  final String numeroDeTelephone;
+
+  User({
+    required this.nom,
+    required this.prenom,
+    this.pays,
+    this.wilaya,
+    required this.email,
+    required this.numeroDeTelephone,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      nom: json['nom'],
+      prenom: json['prenom'],
+      pays: json['pays'],
+      wilaya: json['wilaya'],
+      email: json['email'],
+      numeroDeTelephone: json['numeroDeTelephone'],
+    );
+  }
+}
+
+
 class Room {
   final String name;
   final String type;
@@ -43,7 +74,7 @@ final List<Room> rooms = [
     rating: 4.8,
     images: ['assets/rooms/room1003.png', 'assets/rooms/room1004.png'],
     description: 'Chambre spacieuse avec vue sur la mer et balcon privé.',
-    price: 200.0 * conversionRate, // Converted to DZD
+    price: 29878, // Converted to DZD
     equipment: [
       'Lit king-size avec matelas premium',
       'Balcon privé avec vue',
@@ -57,7 +88,7 @@ final List<Room> rooms = [
     rating: 4.7,
     images: ['assets/rooms/room1005.png', 'assets/rooms/room1006.png'],
     description: 'Suite luxueuse avec salon séparé et jacuzzi privé.',
-    price: 250.0 * conversionRate, // Converted to DZD
+    price: 37347.5, // Converted to DZD
     equipment: [
       'Machine à espresso (Nespresso)',
       'Plancher chauffant en salle de bain',
@@ -75,7 +106,7 @@ final List<Room> rooms = [
       'assets/rooms/room1009.png'
     ],
     description: 'Suite luxueuse avec salon séparé et jacuzzi privé.',
-    price: 150.0 * conversionRate, // Converted to DZD
+    price: 22408.5, // Converted to DZD
     equipment: [
       'Bureau avec imprimante/scanner',
       'Douche à effet pluie et produits de bain exclusifs',
@@ -93,7 +124,7 @@ final List<Room> rooms = [
       'assets/rooms/room1009.png'
     ],
     description: 'A deluxe room with premium furnishings and amenities.',
-    price: 150.0 * conversionRate, // Converted to DZD
+    price: 22408.5, // Converted to DZD
     equipment: [
       'Téléviseur grand écran avec Netflix',
       'Mini-bar rempli (payant)',
@@ -111,7 +142,7 @@ final List<Room> rooms = [
       'assets/rooms/room1009.png'
     ],
     description: 'A deluxe room with premium furnishings and amenities.',
-    price: 150.0 * conversionRate, // Converted to DZD
+    price: 22408.5, // Converted to DZD
     equipment: [
       'Service de majordome',
       'Choix d\'oreillers (femme, moelleux, mémoire de forme)',
@@ -129,7 +160,7 @@ final List<Room> rooms = [
       'assets/rooms/room1009.png'
     ],
     description: 'Chambre spacieuse avec vue sur la mer et balcon privé.',
-    price: 150.0 * conversionRate, // Converted to DZD
+    price: 22408.5, // Converted to DZD
     equipment: [
       'Machine à espresso (Nespresso)',
       'Plancher chauffant en salle de bain',
@@ -147,7 +178,7 @@ final List<Room> rooms = [
       'assets/rooms/room1009.png'
     ],
     description: 'Chambre comfortable avec lit double et salle de bain privée.',
-    price: 150.0 * conversionRate, // Converted to DZD
+    price: 22408.5, // Converted to DZD
     equipment: [
       'Rideaux occultants',
       'Mini-réfrigérateur',
@@ -165,82 +196,13 @@ final List<Room> rooms = [
       'assets/rooms/room1009.png'
     ],
     description: 'A deluxe room with premium furnishings and amenities.',
-    price: 150.0 * conversionRate, // Converted to DZD
+    price: 22408.5, // Converted to DZD
     equipment: [
       'Mini-bar rempli (payant)',
       'Produits de toilette haut de gamme',
       'Enceinte Bluetooth',
       'Machine à espresso (Nespresso)',
     ],
-  ),
-];
-
-class User {
-  final String nom;
-  final String prenom;
-  final String? pays; // Optional field
-  final String? wilaya; // Optional field
-  final String email;
-  final String numeroDeTelephone;
-  final String motDePasse;
-
-  User({
-    required this.nom,
-    required this.prenom,
-    this.pays, // Can be null
-    this.wilaya, // Can be null
-    required this.email,
-    required this.numeroDeTelephone,
-    required this.motDePasse,
-  });
-}
-
-// Sample list of users
-final List<User> users = [
-  User(
-    nom: 'Doe',
-    prenom: 'John',
-    pays: 'Algeria',
-    wilaya: 'Alger',
-    email: 'john.doe@example.com',
-    numeroDeTelephone: '+213123456789',
-    motDePasse: 'password123',
-  ),
-  User(
-    nom: 'Smith',
-    prenom: 'Jane',
-    pays: 'France',
-    wilaya: null, // Not applicable
-    email: 'jane.smith@example.com',
-    numeroDeTelephone: '+33123456789',
-    motDePasse: 'securepassword',
-  ),
-  User(
-    nom: 'Ali',
-    prenom: 'Ahmed',
-    pays: 'Algeria',
-    wilaya: 'Oran',
-    email: 'ahmed.ali@example.com',
-    numeroDeTelephone: '+213987654321',
-    motDePasse: 'mypassword',
-  ),
-  User(
-    nom: 'Brown',
-    prenom: 'Emily',
-    pays: null, // Not filled
-    wilaya: null, // Not filled
-    email: 'emily.brown@example.com',
-    numeroDeTelephone: '+441234567890',
-    motDePasse: 'emilypass',
-  ),
-  User(
-    nom: 'Ben',
-    prenom: 'Youssef',
-    pays: 'Algeria',
-    wilaya: 'Tizi Ouzou',
-    email: 'youssef.ben@example.com',
-    numeroDeTelephone: '+213567890123',
-    motDePasse: 'youssefpass',
   ),
 ];
 
@@ -266,21 +228,18 @@ final List<RestaurationService> restaurationServices = [
     description: 'Un délicieux steak accompagné de frites croustillantes.',
     prix: 1500.0,
   ),
-  
   RestaurationService(
     imagePath: 'assets/services/restauration/Pizza Margherita.webp',
     nom: 'Pizza Margherita',
     description: 'Pizza classique avec sauce tomate, mozzarella et basilic.',
     prix: 1000.0,
   ),
-  
   RestaurationService(
     imagePath: 'assets/services/restauration/Tiramisu.webp',
     nom: 'Tiramisu',
     description: 'Dessert italien classique avec mascarpone et café.',
     prix: 700.0,
   ),
-  
   RestaurationService(
     imagePath: 'assets/services/restauration/Burger Gourmet.webp',
     nom: 'Burger Gourmet',
