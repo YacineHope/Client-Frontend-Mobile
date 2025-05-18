@@ -86,14 +86,21 @@ flutter:
     - assets/rooms/room1007.png
     - assets/rooms/room1008.png
     - assets/rooms/room1009.png
-    - 'assets/services/restauration.webp'
-    - 'assets/services/spa.webp'
-    - 'assets/services/gym2.webp'
-    - 'assets/services/restauration/Burger Gourmet.webp'
-    - 'assets/services/restauration/Tiramisu.webp'
-    - 'assets/services/restauration/Pizza Margherita.webp'
-    - 'assets/services/restauration/Steak Frites.webp'
-    - 'assets/guest.png'
+    - assets/services/restauration.webp
+    - assets/services/spa.webp
+    - assets/services/gym2.webp
+    - assets/services/restauration/Burger Gourmet.webp
+    - assets/services/restauration/Tiramisu.webp
+    - assets/services/restauration/Pizza Margherita.webp
+    - assets/services/restauration/Steak Frites.webp
+    - assets/guest.png
+    - assets/services/gym/Cardio Training.webp
+    - assets/services/gym/Musculation.webp
+    - assets/services/gym/youga.webp
+    - assets/services/spa/massage.webp
+    - assets/services/spa/visage soign.webp
+    - assets/services/spa/soin des pieds.webp
+    - assets/Historique.jpg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

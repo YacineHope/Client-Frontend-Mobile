@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'Models.dart';
 
-class GymServicesPage extends StatelessWidget {
-  const GymServicesPage({super.key});
+class SpaServicesPage extends StatelessWidget {
+  const SpaServicesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +10,7 @@ class GymServicesPage extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
-          'Services de Gym',
+          'Services de Spa',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: const Color(0xFF6E4B2F),
@@ -18,9 +18,9 @@ class GymServicesPage extends StatelessWidget {
       backgroundColor: const Color.fromARGB(255, 232, 196, 167),
       body: ListView.builder(
         padding: const EdgeInsets.all(10.0),
-        itemCount: gymServices.length,
+        itemCount: spaServices.length,
         itemBuilder: (context, index) {
-          final service = gymServices[index];
+          final service = spaServices[index];
           return Card(
             margin: const EdgeInsets.symmetric(vertical: 10.0),
             shape: RoundedRectangleBorder(
@@ -107,7 +107,7 @@ class GymServicesPage extends StatelessWidget {
                         showDialog(
                           context: context,
                           builder: (context) =>
-                              _GymOrderDialog(service: service),
+                              _SpaOrderDialog(service: service),
                         );
                       },
                       style: ElevatedButton.styleFrom(
@@ -132,15 +132,15 @@ class GymServicesPage extends StatelessWidget {
   }
 }
 
-class _GymOrderDialog extends StatefulWidget {
-  final GymService service;
-  const _GymOrderDialog({required this.service});
+class _SpaOrderDialog extends StatefulWidget {
+  final SpaService service;
+  const _SpaOrderDialog({required this.service});
 
   @override
-  State<_GymOrderDialog> createState() => _GymOrderDialogState();
+  State<_SpaOrderDialog> createState() => _SpaOrderDialogState();
 }
 
-class _GymOrderDialogState extends State<_GymOrderDialog> {
+class _SpaOrderDialogState extends State<_SpaOrderDialog> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nomController = TextEditingController();
   final TextEditingController _prenomController = TextEditingController();

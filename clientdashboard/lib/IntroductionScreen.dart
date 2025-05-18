@@ -95,7 +95,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 220.0),
+                padding: const EdgeInsets.only(bottom: 200.0),
                 child: SmoothPageIndicator(
                   controller: _pageController,
                   count: _backgroundImages.length,

@@ -3,6 +3,10 @@ import 'Models.dart'; // Ajoutez ceci en haut si ce n'est pas déjà fait
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import 'ReservationHistoriquePage.dart';
+
+List<ReservationHistorique> historiqueList = []; // <-- Ajouté ici
+
 class ReservationFormPage extends StatefulWidget {
   final Room?
       selectedRoom; // Ajoutez ce paramètre pour recevoir la chambre sélectionnée
@@ -948,8 +952,39 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  // Finalize the reservation
-                  _finaliserReservation();
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Confirmation'),
+                      content: const Text(
+                          'Voulez-vous vraiment finaliser cette réservation ?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context)
+                                .pop(); // Ferme la boîte de dialogue
+                          },
+                          child: const Text('Annuler'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context)
+                                .pop(); // Ferme la boîte de dialogue
+                            _finaliserReservation(); // Appelle la fonction de finalisation
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                          ),
+                          child: const Text(
+                            'Confirmer',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
@@ -991,8 +1026,28 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
       }),
     );
     if (response.statusCode == 201) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Réservation finalisée avec succès!')),
+      historiqueList.add(
+        ReservationHistorique(
+          dateReservation: DateTime.now(),
+          roomName: widget.selectedRoom?.name ?? '',
+          roomType: widget.selectedRoom?.type ?? '',
+          roomPrice: widget.selectedRoom?.price ?? 0,
+          dateDebut: _startDateController.text,
+          dateFin: _endDateController.text,
+          nom: _nameController.text,
+          prenom: _surnameController.text,
+          email: _emailController.text,
+          modePaiement: _selectedPaymentMethod ?? '',
+          demandesSpeciales: _specialRequestController.text,
+        ),
+      );
+      // Affiche la page historique juste après la réservation
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              ReservationHistoriquePage(historiqueList: historiqueList),
+        ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

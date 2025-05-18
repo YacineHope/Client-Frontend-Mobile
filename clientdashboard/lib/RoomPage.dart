@@ -36,8 +36,8 @@ class RoomPage extends StatelessWidget {
         ),
         centerTitle: true, // Ensure the title is centered
       ),
-      drawer: const Drawer(
-        child: Sidebar(), // Add the Sidebar widget
+      drawer: Drawer(
+        child: Sidebar(user: user),
       ),
       backgroundColor: const Color.fromARGB(255, 232, 196, 167),
       body: ListView.builder(
@@ -120,9 +120,10 @@ class RoomPage extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => RoomDetailsPage(
-                                    roomDetails: room,
-                                    currentUser: user // Passe l'utilisateur courant ici
-                                  ),
+                                      roomDetails: room,
+                                      currentUser:
+                                          user // Passe l'utilisateur courant ici
+                                      ),
                                 ),
                               );
                             },

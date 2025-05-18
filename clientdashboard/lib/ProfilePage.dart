@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'Models.dart';
 import 'EditProfilePage.dart';
+import 'Sidebar.dart'; // Ajoute cet import en haut si ce n'est pas déjà fait
 
 class ProfilePage extends StatelessWidget {
   final User user;
@@ -10,6 +11,14 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.menu, color: Colors.white),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+          ),
+        ),
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: const [
@@ -24,6 +33,7 @@ class ProfilePage extends StatelessWidget {
         centerTitle: true,
         backgroundColor: const Color(0xFF6E4B2F),
       ),
+      drawer: Drawer(child: Sidebar(user: user)),
       backgroundColor: const Color.fromARGB(255, 232, 196, 167),
       body: Center(
         child: Container(

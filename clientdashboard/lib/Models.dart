@@ -1,4 +1,3 @@
-
 class User {
   final String nom;
   final String prenom;
@@ -27,7 +26,6 @@ class User {
     );
   }
 }
-
 
 class Room {
   final String name;
@@ -245,5 +243,98 @@ final List<RestaurationService> restaurationServices = [
     nom: 'Burger Gourmet',
     description: 'Burger juteux avec fromage, laitue et tomate.',
     prix: 1300.0,
+  ),
+];
+
+class GymService {
+  final String imagePath; // Chemin de l'image du service
+  final String nom; // Nom du service (ex: "Fitness Cardio")
+  final String description; // Description du service
+  final String heures; // Heures d'ouverture (ex: "08:00 - 22:00")
+  final double prix; // Prix du service en DZD
+  final String equipe; // Liste des équipements disponibles
+
+  GymService({
+    required this.imagePath,
+    required this.nom,
+    required this.description,
+    required this.heures,
+    required this.prix,
+    required this.equipe,
+  });
+}
+
+// Exemple de liste de services de gym
+final List<GymService> gymServices = [
+  GymService(
+    imagePath: 'assets/services/gym/Cardio Training.webp',
+    nom: 'Cardio Training',
+    description: 'Accès aux équipements de cardio-training modernes.',
+    heures: '6h-22h',
+    prix: 1200.0,
+    equipe: 'Équipe Fitness',
+  ),
+  GymService(
+    imagePath: 'assets/services/gym/Musculation.webp',
+    nom: 'Musculation',
+    description:
+        'Salle équipée pour la musculation et le renforcement musculaire.',
+    heures: '7h-21h',
+    prix: 1500.0,
+    equipe: 'Équipe Bodybuilding',
+  ),
+  GymService(
+    imagePath: 'assets/services/gym/youga.webp',
+    nom: 'Yoga',
+    description: 'Séances de yoga en groupe avec coach certifié.',
+    heures: '8h-20h',
+    prix: 1000.0,
+    equipe: 'Équipe Relaxation',
+  ),
+];
+
+class SpaService {
+  final String imagePath; // Chemin de l'image du service
+  final String nom; // Nom du service (ex: "Massage Relaxant")
+  final String description; // Description du service
+  final String heures; // Heures d'ouverture (ex: "09:00 - 20:00")
+  final double prix; // Prix du service en DZD
+  final String equipe; // Équipe ou équipements disponibles
+
+  SpaService({
+    required this.imagePath,
+    required this.nom,
+    required this.description,
+    required this.heures,
+    required this.prix,
+    required this.equipe,
+  });
+}
+
+// Exemple de liste de services de spa
+final List<SpaService> spaServices = [
+  SpaService(
+    imagePath: 'assets/services/spa/massage.webp',
+    nom: 'Massage Relaxant',
+    description: 'Massage complet du corps pour une détente absolue.',
+    heures: '10h-20h',
+    prix: 2500.0,
+    equipe: 'Équipe Bien-être',
+  ),
+  SpaService(
+    imagePath: 'assets/services/spa/visage soign.webp',
+    nom: 'Soin du Visage',
+    description: 'Soin du visage personnalisé avec produits naturels.',
+    heures: '9h-18h',
+    prix: 1800.0,
+    equipe: 'Équipe Beauté',
+  ),
+  SpaService(
+    imagePath: 'assets/services/spa/soin des pieds.webp',
+    nom: 'Soin des Pieds',
+    description: 'Soin complet des pieds avec gommage et massage.',
+    heures: '11h-19h',
+    prix: 1200.0,
+    equipe: 'Équipe Podologie',
   ),
 ];

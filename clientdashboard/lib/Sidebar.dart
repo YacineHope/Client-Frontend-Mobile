@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'RoomPage.dart';
 import 'HomePage.dart';
-import 'ServicesPage.dart'; // Import ServicesPage
-import 'Models.dart'; // Import Models to access User data
-import 'SplashScreen.dart'; // Import SplashScreen for logout
+import 'ServicesPage.dart';
+import 'Models.dart';
+import 'SplashScreen.dart';
+import 'ProfilePage.dart';
 
 class Sidebar extends StatelessWidget {
-  const Sidebar({super.key});
+  final User user;
+
+  const Sidebar({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
-      width: screenWidth < 600 ? screenWidth * 0.7 : 270, // Responsive width
+      width: screenWidth < 600 ? screenWidth * 0.7 : 270,
       height: double.infinity,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -42,15 +45,28 @@ class Sidebar extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.all(20.0),
-              child: Text(
-                'Client Dashboard',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+            // New container for logo and hotel name
+            Container(
+              color: const Color.fromARGB(255, 232, 196, 167),
+              padding: const EdgeInsets.all(20.0),
+              child: Row(
+                children: [
+                  Image.asset(
+                    'assets/splashScreen/Hotel logo.webp',
+                    height: 40,
+                    width: 40,
+                  ),
+                  const SizedBox(width: 10),
+                  const Text(
+                    'Royal Stay',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.blue,
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 20),
@@ -59,7 +75,12 @@ class Sidebar extends StatelessWidget {
               icon: Icons.person,
               title: 'Voir le profile',
               onTap: () {
-                // Navigate to Profile Page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfilePage(user: user),
+                  ),
+                );
               },
             ),
             _buildMenuItem(
@@ -67,7 +88,12 @@ class Sidebar extends StatelessWidget {
               icon: Icons.home,
               title: 'Accueil',
               onTap: () {
-                // Navigate to Home Page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HomePage(user: user, isNew: false),
+                  ),
+                );
               },
             ),
             _buildMenuItem(
@@ -75,8 +101,12 @@ class Sidebar extends StatelessWidget {
               icon: Icons.hotel,
               title: 'Les Chambres',
               onTap: () {
-                // Navigate to RoomPage
-               
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RoomPage(user: user),
+                  ),
+                );
               },
             ),
             _buildMenuItem(
@@ -84,7 +114,6 @@ class Sidebar extends StatelessWidget {
               icon: Icons.room_service,
               title: 'Services',
               onTap: () {
-                // Navigate to ServicesPage
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -95,32 +124,15 @@ class Sidebar extends StatelessWidget {
             ),
             _buildMenuItem(
               context,
-              icon: Icons.history,
-              title: 'Historique des séjours',
-              onTap: () {
-                // Navigate to History Page
-              },
-            ),
-            _buildMenuItem(
-              context,
-              icon: Icons.bar_chart,
-              title: 'Statistiques',
-              onTap: () {
-                // Navigate to Statistics Page
-              },
-            ),
-            _buildMenuItem(
-              context,
               icon: Icons.logout,
               title: 'Déconnexion',
               onTap: () {
-                // Navigate to SplashScreen
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
                     builder: (context) => const SplashScreen(),
                   ),
-                  (route) => false, // Remove all previous routes
+                  (route) => false,
                 );
               },
             ),
@@ -136,13 +148,31 @@ class Sidebar extends StatelessWidget {
     required String title,
     required VoidCallback onTap,
   }) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.white),
-      title: Text(
-        title,
-        style: const TextStyle(color: Colors.white, fontSize: 16),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      child: InkWell(
+        onTap: onTap,
+        hoverColor: Colors.transparent,
+        child: ListTile(
+          leading: Icon(icon, color: Colors.white),
+          title: Text(
+            title,
+            style: const TextStyle(color: Colors.white, fontSize: 16),
+          ),
+        ),
+        onHover: (isHovered) {
+          // The hover effect is handled by the AnimatedContainer
+        },
+        // Adding a custom hover animation with background color change
+        overlayColor: MaterialStateProperty.resolveWith<Color?>(
+          (Set<MaterialState> states) {
+            if (states.contains(MaterialState.hovered)) {
+              return Colors.white.withOpacity(0.2);
+            }
+            return Colors.transparent;
+          },
+        ),
       ),
-      onTap: onTap,
     );
   }
 }

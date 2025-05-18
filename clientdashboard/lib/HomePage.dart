@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'Sidebar.dart';
 import 'Footer.dart';
 import 'RoomPage.dart'; // Import RoomPage for navigation
-// Import ProfilePage
 import 'SplashScreen.dart'; // Import SplashScreen
 import 'Models.dart';
 import 'ProfilePage.dart'; // Import ProfilePage
+import 'ReservationHistoriquePage.dart'; // Import ReservationHistoriquePage
 
 class HomePage extends StatefulWidget {
   final User user;
@@ -56,6 +56,8 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
+        iconTheme:
+            const IconThemeData(color: Colors.white), // <-- Ajoute cette ligne
         title: Row(
           children: [
             // Logo de l'hôtel
@@ -118,9 +120,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      drawer: const Drawer(
-        child: Sidebar(), // Use the Sidebar widget here
-      ),
+      drawer: Drawer(child: Sidebar(user: widget.user)),
       backgroundColor: const Color.fromARGB(255, 232, 196, 167),
       body: SingleChildScrollView(
         child: Column(
@@ -352,9 +352,82 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
+
             const SizedBox(height: 20),
 
-            // 5. Avis des Clients
+            // New Container for Reservation History
+            Container(
+              height: screenHeight * 0.4,
+              width: double.infinity,
+              margin: const EdgeInsets.symmetric(horizontal: 20.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+                image: const DecorationImage(
+                  image: AssetImage('assets/Historique.jpg'),
+                  fit: BoxFit.cover,
+                  opacity: 0.7,
+                ),
+              ),
+              child: Stack(
+                children: [
+                  // Centered Text Description
+                  const Center(
+                    child: Text(
+                      'Consulter votre historique de réservation',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  // Button at the Bottom
+                  Positioned(
+                    bottom: 20,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Navigate to ReservationHistoriquePage
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ReservationHistoriquePage(
+                                historiqueList: [], // Pass your list here
+                              ),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF8C6239),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: const Text(
+                          'Consulter',
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
             // 5. Avis des Clients
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -451,30 +524,6 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 20),
 
-            // 6. Promotions et Offres Spéciales
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: Text(
-                'Promotions',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Container(
-                padding: const EdgeInsets.all(15.0),
-                decoration: BoxDecoration(
-                  color: Colors.orange.shade100,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Text(
-                  'Réservez maintenant et bénéficiez de 20% de réduction sur votre séjour !',
-                  style: TextStyle(fontSize: 16, color: Colors.black87),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
             const Footer(),
           ],
         ),

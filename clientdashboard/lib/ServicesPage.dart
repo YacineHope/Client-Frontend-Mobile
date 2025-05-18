@@ -1,6 +1,9 @@
+import 'package:clientdashboard/GymServicesPage.dart';
 import 'package:flutter/material.dart';
-import 'Sidebar.dart'; // Import Sidebar
-import 'RestaurationServicesPage.dart'; // Import the RestaurationServicesPage
+// Import Sidebar
+import 'RestaurationServicesPage.dart';
+import 'SpaServices.dart'; // Import the RestaurationServicesPage
+// Import the GymServicesPage
 
 class ServicesPage extends StatelessWidget {
   const ServicesPage({super.key});
@@ -25,7 +28,6 @@ class ServicesPage extends StatelessWidget {
             ],
           ),
           backgroundColor: const Color(0xFF8C6239)),
-      
       body: ListView(
         padding: const EdgeInsets.all(10.0),
         children: [
@@ -51,6 +53,14 @@ class ServicesPage extends StatelessWidget {
                 'assets/services/gym2.webp', // Replace with your image path
             heading: 'Gym',
             description: 'Accéder à la salle de sport et aux équipements',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const GymServicesPage(),
+                ),
+              );
+            },
           ),
           const SizedBox(height: 20),
           // Third Container: Spa
@@ -59,6 +69,15 @@ class ServicesPage extends StatelessWidget {
                 'assets/services/spa.webp', // Replace with your image path
             heading: 'Spa',
             description: 'Réserver des séances de massage ou de bien-être',
+            onTap: () {
+              // Add navigation to the Spa services page
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SpaServicesPage(),
+                ),
+              );
+            },
           ),
         ],
       ),
@@ -77,11 +96,11 @@ class ServicesPage extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.black26,
               blurRadius: 10,
-              offset: const Offset(0, 5),
+              offset: Offset(0, 5),
             ),
           ],
         ),
